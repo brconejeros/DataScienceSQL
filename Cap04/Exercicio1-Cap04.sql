@@ -1,5 +1,8 @@
 # SQL Para Análise de Dados e Data Science - Capítulo 04
 
+-- # Dica de local para validar sintaxe ou executar análises online
+    http://sqlfiddle.com/
+
 -- Criando a tabela 'funcionarios'
 CREATE TABLE cap04.funcionarios (
     id SERIAL PRIMARY KEY,
@@ -38,12 +41,35 @@ INSERT INTO cap04.funcionarios (nome, sobrenome, salario, departamento, data_con
 # Use SQL para responder às perguntas abaixo:
 
 # 1- Quem são os funcionários do departamento de Engenharia? Retorne nome e sobrenome.
+    select nome, sobrenome
+    from cap04.funcionarios
+    where departamento = 'Engenharia'
+    order by 1, 2
+    
 # 2- Quais funcionários foram contratados em 2021 ou depois? Retorne nome, sobrenome e data_contratacao.
+    select nome, sobrenome, data_contratacao
+    from cap04.funcionarios
+    where data_contratacao >= '2021-01-01'
+    order by 3;
+    
 # 3- Quais funcionários recebem salário entre 5000 e 6000? Retorne nome, sobrenome, salario e departamento.
+    select nome, sobrenome, salario, departamento
+    from cap04.funcionarios
+    where salario between 5000 and 6000
+    order by 3 desc;
+    
 # 4- Quais funcionários têm nome começando com a letra J ou com a letra B? Retorne nome, sobrenome e departamento.
+    select nome, sobrenome, departamento
+    from cap04.funcionarios
+    where nome like 'J%' or nome like 'B%'
+    order by 1;
+    
 # 5- Há algum funcionário cujo sobrenome tenha as letras 've', seja do departamento de Marketing e o salário seja maior do que 5500?
-
-
+    select *
+    from cap04.funcionarios
+    where sobrenome like '%ve%'
+      and departamento = 'Marketing'
+      and salario > 5500;
 
 
 

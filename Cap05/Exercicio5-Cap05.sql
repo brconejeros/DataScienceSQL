@@ -36,27 +36,44 @@ INSERT INTO cap05.vendas (data_venda, valor, id_produto) VALUES
 
 
 -- Pergunta 1: Qual é o total de vendas por produto?
-
+select
+	id_produto,
+	sum(valor) valor
+from cap05.vendas
+group by 1
+order by 2 desc;
 
 -- Pergunta 2: Quantos produtos diferentes foram vendidos?
+select
+	distinct id_produto
+from cap05.vendas;
 
+select
+	count(distinct id_produto) as produtos_diferentes
+from cap05.vendas;
 
 -- Pergunta 3: Qual é o total de vendas por dia?
+select
+	data_venda,
+	sum(valor) valor
+from cap05.vendas
+group by 1
+order by 1 desc;
 
-
--- Pergunta 4: Em quais dias o valor total de vendas foi superior a $100?
-
+-- Pergunta 4: Em quais dias o valor total de vendas foi superior a $50?
+select
+	data_venda,
+	sum(valor) valor
+from cap05.vendas
+group by 1
+having sum(valor) > 50
+order by 1 desc;
 
 -- Pergunta 5: Quais produtos tiveram um valor total de vendas superior a $50?
-
-
-
-
-
-
-
-
-
-
-
-
+select
+	id_produto,
+	sum(valor) valor
+from cap05.vendas
+group by 1
+having sum(valor) > 50
+order by 2 desc;

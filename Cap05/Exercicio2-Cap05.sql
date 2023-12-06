@@ -35,20 +35,41 @@ INSERT INTO cap05.clientes (nome, email, cidade, estado, data_nascimento) VALUES
 
 
 -- Pergunta 1: Quantos clientes estão registrados por estado?
-
+select 
+	count(1) qtde,
+	estado
+from cap05.clientes
+group by 2
+order by 1 desc;
 
 -- Pergunta 2: Qual é a idade média dos clientes?
+select 
+	round(avg(extract(year from current_date) - extract(year from data_nascimento)), 2) idade_media_clientes
+from cap05.clientes;
 
+select 
+	round(avg(extract(year from age(current_date, data_nascimento))), 2) idade_media_clientes
+from cap05.clientes;
 
 -- Pergunta 3: Quantos clientes têm mais de 30 anos?
+select count(1) qtde
+from cap05.clientes
+where extract(year from current_date) - extract(year from data_nascimento) > 30
 
+select count(1) qtde
+from cap05.clientes
+where extract(year from age(current_date, data_nascimento)) > 30
 
 -- Pergunta 4: Quais são as 3 cidades com o maior número de clientes?
-
+select
+	cidade,
+	count(1) qtde
+from cap05.clientes
+group by 1
+order by 2 desc
+limit 3;
 
 -- Pergunta 5: Quantos clientes têm um endereço de e-mail registrado?
-
-
-
-
-
+select count(1) qtde
+from cap05.clientes
+where email != '';

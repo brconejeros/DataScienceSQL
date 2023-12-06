@@ -35,24 +35,39 @@ INSERT INTO cap05.produtos (nome, preco, quantidade, categoria, data_criacao) VA
 
 
 -- Pergunta 1: Qual é o valor total de produtos em estoque por categoria?
+select
+	categoria,
+	sum(preco*quantidade) valor_total
+from cap05.produtos
+group by 1
+order by 2 desc;
 
 
 -- Pergunta 2: Qual é a quantidade média de produtos em estoque por categoria?
-
+select
+	categoria,
+	round(avg(quantidade)) quantidade_media
+from cap05.produtos
+group by 1
+order by 2 desc;
 
 -- Pergunta 3: Qual é o preço médio dos produtos por categoria?
-
+select
+	categoria,
+	round(avg(preco), 2) preco_media
+from cap05.produtos
+group by 1
+order by 2 desc;
 
 -- Pergunta 4: Qual é o número total de categorias de produtos?
-
+select count(distinct categoria) qtde_categorias
+from cap05.produtos
 
 -- Pergunta 5: Qual é a categoria com a maior quantidade de produtos em estoque?
-
-
-
-
-
-
-
-
-
+select
+	categoria,
+	sum(quantidade)
+from cap05.produtos
+group by 1
+order by 2 desc
+limit 1;

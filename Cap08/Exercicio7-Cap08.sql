@@ -53,24 +53,43 @@ INSERT INTO cap08.livros_vendidos (id_livro, id_autor) VALUES
 
 
 -- Exercício 1: Liste todos os livros vendidos e seus respectivos autores.
-
-
+select lven.id_livro, liv.titulo nome_livro, lven.id_autor, aut.nome nome_autor
+from cap08.livros_vendidos lven
+left join cap08.autores aut
+	using (id_autor)
+left join cap08.livros liv
+	using (id_livro);
 
 -- Exercício 2: Liste todos os autores e seus respectivos livros, incluindo autores que não têm livros cadastrados.
-
-
+select lven.id_livro, liv.titulo nome_livro, lven.id_autor, aut.nome nome_autor
+from cap08.livros_vendidos lven
+right join cap08.autores aut
+	using (id_autor)
+left join cap08.livros liv
+	using (id_livro);
 
 -- Exercício 3: Liste todos os livros e seus respectivos autores, incluindo livros que não têm autores cadastrados.
-
-
+select lven.id_livro, liv.titulo nome_livro, lven.id_autor, aut.nome nome_autor
+from cap08.livros_vendidos lven
+left join cap08.autores aut
+	using (id_autor)
+right join cap08.livros liv
+	using (id_livro);
 
 -- Exercício 4: Liste os autores que nasceram antes de 1970 e os livros que eles escreveram.
-
-
+select lven.id_livro, liv.titulo nome_livro, lven.id_autor, aut.nome nome_autor, aut.data_nascimento
+from cap08.livros_vendidos lven
+left join cap08.autores aut
+	using (id_autor)
+left join cap08.livros liv
+	using (id_livro)
+where aut.data_nascimento <= '1970-01-01';
 
 -- Exercício 5: Liste os livros publicados após 2017, incluindo os que não têm autores associados.
-
-
-
-
-
+select lven.id_livro, liv.titulo nome_livro, liv.ano_publicacao, lven.id_autor, aut.nome nome_autor
+from cap08.livros_vendidos lven
+left join cap08.autores aut
+	using (id_autor)
+right join cap08.livros liv
+	using (id_livro)
+where liv.ano_publicacao >= 2017;

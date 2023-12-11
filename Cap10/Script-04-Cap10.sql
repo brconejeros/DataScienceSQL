@@ -84,6 +84,18 @@ FROM
 GROUP BY 
     ROLLUP(ano);
 
+-- Tentativa no modo convencional
+with faturamento_ano as (
+select ano, sum(faturamento) faturamento
+from cap10.dsa_vendas
+group by 1
+)
+select 'Total' as descricao, sum(faturamento) faturamento
+from faturamento_ano
+union
+select cast(ano as varchar), faturamento
+from faturamento_ano
+order by 1;
 
 -- Faturamento total por ano e total geral, ordenado por ano
 SELECT 

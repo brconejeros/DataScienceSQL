@@ -1,1 +1,672 @@
 # DataScienceSQL
+
+Os  tipos  de  dados  são  classificações  que  nos  ajudam  a  entender  e  categorizar  as informações coletadas em pesquisas, estudos e observações. Estes dados podem ser classificados principalmente em dois grupos: quantitativos e qualitativos. Vamos explorar cada um deles:
+Dados Quantitativos
+	São  aqueles  que  expressam  uma  quantidade  e  podem  ser  mensurados  em  escala numérica. Os dados quantitativos podem ser divididos em:
+		Discretos: São resultados de contagens e só podem assumir valores inteiros. Por exemplo, número de filhos, número de carros em uma casa, número de alunos em uma sala de aula.
+		Contínuos:  São resultados  de  mensurações  e  podem  assumir  qualquer  valor  em  um intervalo. Por exemplo, peso, altura, temperatura, distância.
+Dados Qualitativos
+	Representam características que não podem ser medidas em uma escala numérica, mas podem ser categorizadas ou descritas. Os dados qualitativos são classificados em:
+		Nominais: Representam categorias sem uma ordem implícita. Por exemplo: cor dos olhos (azul, verde, castanho), tipo sanguíneo (A, B, AB, O), marcas de carros (Ford, Toyota, Honda).
+		Ordinais: Representam categorias com uma ordem ou graduação específica. No entanto, a  distância  entre  as  categorias  não  é  uniforme  ou  conhecida.  Exemplos  incluem  níveis  de escolaridade (fundamental, médio, superior), graus de satisfação em uma pesquisa (insatisfeito, indiferente, satisfeito) e classificações (primeiro, segundo, terceiro).
+Em análises de dados, é comum a combinação de dados quantitativos e qualitativos para obter uma visão mais completa sobre o objeto de análise. Ambos os tipos de dados têm sua importância e aplicação, dependendo do contexto e do objetivo.
+
+A categorização em variáveis numéricas, no contexto da análise de dados, refere-se ao processo  de  transformar  dados  numéricos  contínuos  ou  discretos  em  categorias  ou  grupos discretos. Esse processo é também frequentemente chamado de "binning" ou "bucketing". A ideia é simplificar a análise ou visualização de distribuições numéricas, ou preparar os dados para algoritmos que operam melhor com dados categóricos.
+Aqui estão algumas razões para categorizar variáveis numéricas:
+	Simplificação de Análise: Categorizar dados numéricos pode simplificar a interpretação, especialmente quando há uma grande variedade de valores numéricos.
+	Visualização: Em alguns casos, é mais intuitivo visualizar dados categóricos do que dados numéricos contínuos. Histogramas, por exemplo, são uma forma de visualizar a distribuição de dados numéricos através de "bins".
+	Tratamento de Outliers: A categorização pode ajudar a lidar com outliers, agrupando valores extremos em categorias mais amplas.
+	Preparação  para  Modelos  Específicos:  Alguns  modelos  de  Machine  Learning  podem exigir, ou operar melhor, com características categóricas em vez de numéricas.
+O processo de categorização em variáveis numéricas geralmente envolve:
+	Definição de Intervalos: Escolher os limites que definirão as categorias. Isso pode ser feito com base em intervalos de igual tamanho, percentis ou utilizando conhecimento específico do domínio.
+	Transformação: Convertendo os valores numéricos nas categorias definidas com base nos intervalos escolhidos.
+	Rotulação (opcional): Em vez de usar os intervalos como rótulos, pode-se atribuir rótulos mais descritivos às categorias, como "baixo", "médio" e "alto".
+
+-- Categorização da variável seio (E/D)
+SELECT 
+  CASE 
+    WHEN seio = 'esquerdo' THEN 'E' 
+    WHEN seio = 'direito' THEN 'D'
+  END AS seio
+FROM cap06.dsa_pacientes;
+
+-- Categorização da variável tamanho_tumor (6 Categorias)
+SELECT 
+  CASE 
+    WHEN tamanho_tumor = '0-4'   OR tamanho_tumor = '5-9'   THEN 'Muito Pequeno'
+    WHEN tamanho_tumor = '10-14' OR tamanho_tumor = '15-19' THEN 'Pequeno'
+    WHEN tamanho_tumor = '20-24' OR tamanho_tumor = '25-29' THEN 'Medio'
+    WHEN tamanho_tumor = '30-34' OR tamanho_tumor = '35-39' THEN 'Grande'
+    WHEN tamanho_tumor = '40-44' OR tamanho_tumor = '45-49' THEN 'Muito Grande'
+    WHEN tamanho_tumor = '50-54' OR tamanho_tumor = '55-59' THEN 'Tratamento Urgente'
+  END AS tamanho_tumor
+FROM cap06.dsa_pacientes;
+
+No  contexto  da  análise  de  dados  e,  em  particular,  do  processamento  de  dados  para modelagem preditiva ou Machine Learning, "codificação" ou "encoding" refere-se ao processo de converter dados categóricos ou textuais em um formato numérico que pode ser usadopor algoritmos. Muitos algoritmos requerem que as entradas sejam numéricas, e, portanto, os dados categóricos precisam ser transformados antes do treinamento ou análise.
+Existem várias técnicas de codificação e a escolha da técnica pode depender da natureza dos dados e do algoritmo específico que se planeja usar. Algumas das técnicas de codificação mais comuns incluem:
+	Codificação One-Hot (One-Hot Encoding):
+		Cada categoria única de uma variável é convertida em uma nova coluna binária (com valores 0 ou 1).
+		Por  exemplo,  uma  coluna  "cor"  com  valores  "vermelho",  "azul"  e  "verde"  seria transformada em três colunas: "cor_vermelho", "cor_azul" e "cor_verde", onde cada coluna teria 1 se a cor original correspondesse e 0 caso contrário. Isso é representado na imagemabaixo.
+		
+		-- One-Hot Encoding (criação de variáveis dummy)
+		SELECT 
+			menopausa,
+			CASE 
+				WHEN menopausa = 'acima_de_40' THEN 1 
+				ELSE 0 
+			END AS acima_de_40,
+			CASE 
+				WHEN menopausa = 'pré-menopausa' THEN 1 
+				ELSE 0 
+			END AS pre_menopausa,
+			CASE 
+				WHEN menopausa = 'abaixo_de_40' THEN 1 
+				ELSE 0 
+			END AS abaixo_de_40
+		FROM cap06.dsa_pacientes;
+	
+	Codificação por Rótulo (Label Encoding):
+		Cada categoria única recebe um valor inteiro.
+		Esta abordagem pode ser problemática para algoritmos que interpretam a natureza ordinal dos números, a menos que haja uma ordem inerente às categorias.
+		
+		-- Label Encoding da variável seio (1/2)
+		SELECT 
+		  CASE 
+			WHEN seio = 'esquerdo' THEN '1' 
+			WHEN seio = 'direito' THEN '2'
+		  END AS seio
+		FROM cap06.dsa_pacientes;
+
+		-- Label Encoding da variável tamanho_tumor (6 Categorias)
+		SELECT 
+		  CASE 
+			WHEN tamanho_tumor = '0-4'   OR tamanho_tumor = '5-9'   THEN '1'
+			WHEN tamanho_tumor = '10-14' OR tamanho_tumor = '15-19' THEN '2'
+			WHEN tamanho_tumor = '20-24' OR tamanho_tumor = '25-29' THEN '3'
+			WHEN tamanho_tumor = '30-34' OR tamanho_tumor = '35-39' THEN '4'
+			WHEN tamanho_tumor = '40-44' OR tamanho_tumor = '45-49' THEN '5'
+			WHEN tamanho_tumor = '50-54' OR tamanho_tumor = '55-59' THEN '6'
+		  END AS tamanho_tumor
+		FROM cap06.dsa_pacientes;
+		
+	Codificação por Frequência ou Contagem (Frequency or Count Encoding):
+		Categorias são codificadas com base em sua frequência ou contagem no dataset.
+		Isso  pode  ser  útil  quando  uma  categoria  particular  tem  significado  por  sua prevalência, mas pode ser problemático se as frequências forem muito semelhantes entre categorias.
+		
+	Codificação Target (Target Encoding):
+		Categorias  são  codificadas  com  base  na  média  do  valor  alvo  (target)  para  essa categoria.
+		Por  exemplo,  em  um  problema  de  classificação  binária,  as  categorias  podem  ser codificadas pela média de resultados positivos para cada categoria.
+		É  preciso  ter  cuidado  ao  usar  esta  técnica  para  evitar  vazamento  de  dados  (data leakage).
+	
+	Codificação Binária (Binary Encoding):
+		Combina a codificação one-hot e a codificação por rótulo, representando os rótulos codificados numericamente em formato binário.
+	
+	Codificação Baseada em Aprendizado (Embedding Encoding):
+		Usada principalmente com redes neurais, onde categorias são representadas como vetores densos em um espaço n-dimensional. Estes vetores são aprendidos durante o treinamento da rede neural. Essa técnica é usada em Inteligência Artificial.
+		
+Ao escolher uma técnica de codificação, é importante considerar o tipo de modelo a ser usado, a relação entre a característica categórica e a variável alvo, e o potencial de introduzir ruído ou multicolinearidade nos dados. Em alguns casos, pode ser benéfico experimentar várias técnicas de codificação para determinar qual oferece o melhor desempenho para um modelo específico.
+
+Binarização, no contexto da análise e processamento de dados, refere-se ao processo de converter dados numéricos ou categóricos em formato binário, ou seja, em valores 0 ou 1. Isso pode ser útil por diversas razões, incluindo a simplificação de dados, preparação para certos algoritmos ou até mesmo a extração de características relevantes de imagens em processamento de imagens.Abaixoestão alguns contextos em que a binarização é aplicada.
+
+	Análise e Processamento de Dados:
+		Converter variáveiscontínuas  em  formatos  binários  com  base  em  um  limiar.  Por exemplo, converter uma variável como “idade”em uma variável binária como “maior de 18 anos”(1 se verdadeiro, 0 se falso).
+	
+	Processamento de Imagens:
+		A binarização de imagens envolve a conversão de imagens em tons de cinza para imagens binárias, onde os pixels são marcados como 0 (preto) ou 1 (branco) com base em um limiar de intensidade. Isso é útil para reconhecimento de padrões e outras tarefas.
+		
+	Preparação de Dados para Modelagem:
+		Certos algoritmos, especialmente os mais simples ou aqueles baseados em árvores, podem se beneficiar da simplificação de dados contínuos em formatos binários.
+		A binarização pode ajudar a destacar relações não lineares entre características e a variável alvo.
+		
+	Engenharia de Características (Feature Engineering):
+		A  criação  de  novas  características  binárias  pode  ajudar  a  destacar  determinadas relações nos dados. Por exemplo, a partir de uma variável médiade renda, criar uma característica binária “renda_acima_da_média”que indica se a renda de um indivíduo está acima da médiada amostra.
+
+-- Binarização da variável classe (0/1)
+SELECT 
+  CASE 
+    WHEN classe = 'sem-recorrencia-eventos' THEN 0 
+    WHEN classe = 'com-recorrencia-eventos' THEN 1
+  END AS classe
+FROM cap06.dsa_pacientes;
+
+#### JOIN ####
+
+O FULL JOIN,  também  conhecido  como  FULL  OUTER  JOIN,  combina  registros  de  duas tabelas de modo que você obtenha todos os registros de ambas as tabelas. Se houver um registro na primeira tabela que não tenha correspondência na segunda, ou vice-versa, esse registro ainda aparecerá  no  conjunto  de  resultados,  mas  com  valores  NULL  na  parte  onde  não  houve correspondência. Quando usar:
+	FULL  JOIN  é  usado  quando  você  deseja  obter  todos  os  registros  de  ambas  as  tabelas  e identificar registros que não têm correspondência em uma ou outra tabela.
+	
+	select *
+	from cap08.produtos pr
+	full join cap08.pedidos pe
+		on pr.id_produto = pe.id_produto;
+
+O CROSS JOIN produz o produto cartesiano de duas tabelas. Isso significa que ele combina cada linha da primeira tabela com cada linha da segunda tabela, resultando em um conjunto de resultados que tem o número de linhas da primeira tabela multiplicado pelonúmero de linhas da segunda tabela. Quando usar:
+	CROSS  JOIN  é  usado  quando  você  quer  combinar  todas  as  linhas  de  duas  tabelas, geralmente  em  situações  onde  deseja  produzir  combinações  possíveis  entre  registros  de  duas tabelas.
+	
+	select *
+	from cap08.produtos pr
+	cross join cap08.pedidos pe;
+
+O SELF JOIN é uma técnica onde uma tabela é unida a si mesma. É usado para encontrar e combinar registros dentro da mesma tabela que compartilham alguma característica em comum. Quando usar:
+	SELF JOIN é usado quando há uma razão para comparar ou combinar registros dentro da mesma   tabela,   como   encontrar   pares   de   registros   que   tenham   valores   similares   em determinadas colunas.
+	
+	select *
+	from cap08.pedidos p1
+	inner join cap08.pedidos p2
+		on p1.id_cliente = p2.id_cliente;
+		
+	select *
+	from cap08.pedidos p1
+	join cap08.pedidos p2
+		on p1.id_cliente = p2.id_cliente;
+		
+	select *
+	from cap08.pedidos p1
+	join cap08.pedidos p2
+		on p1.id_cliente = p2.id_cliente and p1.id_pedido < p2.id_pedido;
+		
+Use a clausula using para simplificar a junção quando diferentes tabelas tem o mesmo nome de coluna:
+	
+	select *
+	from cap08.pedidos p1
+	join cap08.pedidos p2
+		on p1.id_cliente = p2.id_cliente;
+		
+	select *
+	from cap08.pedidos p1
+	join cap08.pedidos p2
+		using (id_cliente)
+		
+Ordenação diretamente via case when ou outras cláusulas
+
+	-- Média do valor dos pedidos por cidade (mostrar cidades sem pedidos)
+	SELECT 
+		cidade_cliente, 
+		CASE 
+			WHEN AVG(valor_pedido) IS NULL THEN 'Não Houve Pedido' 
+			ELSE CAST(ROUND(AVG(valor_pedido), 2) AS VARCHAR)
+		END AS media
+	FROM 
+		cap09.dsa_clientes C
+		LEFT JOIN cap09.dsa_pedidos P ON C.id_cli = P.id_cliente
+	GROUP BY 
+		cidade_cliente
+	ORDER BY 
+		CASE 
+			WHEN AVG(valor_pedido) IS NULL THEN 1 
+			ELSE 0 
+		END, 
+		media DESC;
+		
+-- ROLLUP
+	O operador ROLLUP é uma extensão da cláusula GROUP BY em SQL, usado principalmente para realizar análises agregadas e multidimensionais, como relatórios sumários ou subtotais.
+	Funciona da seguinte forma
+		Agregação Regular: Primeiro, o ROLLUP gera os resultados agrupados pelas colunas especificadas na cláusula  GROUP BY, da mesma forma que uma cláusula GROUP BY normal faria.
+		Agregação Hierárquica: Depois, o ROLLUP cria níveis adicionais de agregação hierárquica. Ele faz isso removendo sucessivamente as colunas da direita para esquerda e recalculando as agregações para cada nível.
+		Geração de Subtotais: Cada nível de agregação resulta em um conjunto de subtotais. Por exemplo, se você agrupar por ano, mês e dia [GROUP BY ROLLUP (ano, mês, dia)], o ROLLUP vai gerar subtotais para cada dia, para cada mês (independente do dia) e um total geral para o ano.
+		Resultados: No final, você obtêm um conjunto de linhas que inclui não apenas as agregações normais (para cada combinação das colunas de agrupamento), mas também os subtotais e o total geral.
+	
+	-- tentativa sem rollup
+	with faturamento_ano as (
+	select ano, sum(faturamento) faturamento
+	from cap10.dsa_vendas
+	group by 1
+	)
+	select 'Total' as descricao, sum(faturamento) faturamento
+	from faturamento_ano
+	union
+	select cast(ano as varchar), faturamento
+	from faturamento_ano
+	order by 1;
+	
+	-- com rollup
+	select 
+		coalesce(TO_CHAR(ano, '9999'), 'Total') ano, 
+		sum(faturamento) faturamento
+	from cap10.dsa_vendas
+	group by 
+		rollup(ano)
+	order by 1;	
+	
+	-- com 2 hierarquias
+	select 
+		coalesce(TO_CHAR(ano, '9999'), 'Total') ano, 
+		coalesce(pais, 'Total') as pais,
+		sum(faturamento) faturamento
+	from cap10.dsa_vendas
+	group by 
+		rollup(ano, pais)
+	order by 1, 2;
+	
+-- CUBE
+	O operador CUBE em SQL é uma extensão da cláusula GROUP BY que facilita análises multidimensionais avançadas, como relatórios com múltiplas combinações de subtotais e totais gerais. Aqui está como ele funciona:
+		Agregagação Multidimensional: Diferente do ROLLUP, que cria subtotais em uma hierarquia sequencial, o CUBE gera todas as combinações possíveis de subtotais para as colunas especificadas. Isso significa que ele realiza agregações para cada combinação de colunas, além das agregações individuais e um total geral.
+		Combinações de Subtotais: Por exemplo, se você usa CUBE com as colunas A, B e C (GROUP BY CUBE (A,B,C)), ele retornará subtotais para A, B, C, A+B, A+C, B+C, A+B+C e também um total geral.
+		Análise Compreensiva: Isso permite uma análise compreensiva de dados, pois você pode ver como diferentes dimensões interagem entre si para impactar os resultados agregados.
+		Resultados: Os resultados incluem não apenas as linhas para cada combinação de valores das colunas de agrupamento, mas também linhas adicionais para cada possível combinação de subtotais e um total geral.
+	
+	select 
+		coalesce(TO_CHAR(ano, '9999'), 'Total') ano, 
+		coalesce(pais, 'Total') as pais,
+		sum(faturamento) faturamento
+	from cap10.dsa_vendas
+	group by 
+		cube(ano, pais)
+	order by 1, 2;
+	
+-- GROUPING
+	A função GROUPING em SQL é usada para determinar se uma coluna ou expressão em uma consulta está sendo agrupada ou se está em uma linha de subtotal ou total. Podemos usar a função GROUPING para fazer a ordenação do resultado. Geralmente usado para quando usamos o ROLLUP ou CUBE.
+	
+	-- Case 1
+	select 
+		case 
+			when ano is null then 'Total Geral'
+			else cast(ano as varchar)
+		end as ano,
+		case 
+			when produto is null then 'Todos os Produtos'
+			else produto
+		end as produto,
+		sum(faturamento) faturamento
+	from cap10.dsa_vendas
+	group by 
+		rollup(ano, produto)
+	order by 
+		grouping(produto), ano, faturamento;
+	
+	-- Case 2
+	select 
+		case 
+			when grouping(ano) = 1 then 'Total de Todos os Anos'
+			else cast(ano as varchar)
+		end as ano,
+		case 
+			when grouping(pais) = 1 then 'Total de Todos os Países'
+			else pais
+		end as pais,
+		case 
+			when grouping(produto) = 1 then 'Total de Todos os Produtos'
+			else produto
+		end as produto,
+		sum(faturamento) faturamento
+	from cap10.dsa_vendas
+	group by 
+		rollup(ano, pais, produto)
+	order by 
+		grouping(produto, ano, pais), ano, pais, produto;
+		
+-- STRING_AGG (PostgreSQL) or GROUP_CONCAT (MySQL)
+	Retorna vários registros em formato de lista
+	
+	-- Case1
+	select
+		pais,
+		string_agg(produto, ', ') produtos_vendidos,
+		sum(faturamento) faturamento
+	from cap10.dsa_vendas
+	where ano = 2024
+	group by
+		pais;
+		
+	-- Case2
+	select
+		ano,
+		string_agg(distinct produto, ', ') produtos_vendidos,
+		sum(faturamento) faturamento
+	from cap10.dsa_vendas
+	group by
+		ano
+		
+	-- Case 3
+	select
+		ano,
+		pais,
+		string_agg(produto, ', ') produtos_vendidos,
+		sum(faturamento) faturamento
+	from cap10.dsa_vendas
+	group by
+		ano, pais;
+		
+-- GROUPING SETS
+	
+	select 
+		coalesce(vendedor, 'Todos') vendedor,
+		coalesce(produto, 'Todos') produto,
+		sum(quantidade*valorunitario) total_vendas
+	from cap10.vendas
+	group by grouping sets (
+		(produto),
+		(vendedor),
+		()
+	)
+	order by 
+		grouping(vendedor, produto), total_vendas desc
+	;
+	
+-- Window + Group By
+
+	select 
+		funcionario,
+		ano,
+		sum(unidades_vendidas) as total_unidades_vendidas,
+		sum(sum(unidades_vendidas)) over(partition by ano) as unidades_vendidas_ano,
+		round(sum(unidades_vendidas) / sum(sum(unidades_vendidas)) over(partition by ano) * 100, 2) proporcao_ano
+	from cap11.vendas
+	group by
+		1,2
+	order by 2 desc, 3 desc, 1;
+	
+-- Como calcular a mediana, entre outros
+	SELECT
+		centro_custo,
+		count(1) contagem_lancamentos,
+		sum(valor) total_valores_lancamentos,
+		round(avg(valor), 2) media_valores_lancamentos,
+		max(valor) maior_valor,
+		min(valor) menor_valor,
+		sum(case when moeda = 'USD' then valor else 0.00 end) as soma_valores_usd,
+		sum(case when moeda = 'EUR' then valor else 0.00 end) as soma_valores_eur,
+		sum(case when moeda = 'BRL' then valor else 0.00 end) as soma_valores_brl,
+		round(avg(coalesce(taxa_conversao, 0.00)), 2) as media_taxa_conversao,
+		percentile_cont(0.5) within group (order by valor) as mediana_valores -- (MEDIANA)
+	FROM cap13.lancamentosdsacontabeis
+	group by 1
+	order by 3 desc;
+	
+-- Como calcular quartis (porcentagem) e desvio padrao
+	select
+		centro_custo,
+		moeda,
+		count(1) quantidade_lancamentos,
+		round(avg(valor), 2) media_valor,
+		round(stddev(valor),2) desvio_padrao_valor,
+		min(valor) menor_valor,
+		max(valor) maior_valor,
+		round(percentile_cont(0.25) within group (order by valor)::NUMERIC, 2) primeiro_quartil,
+		round(percentile_cont(0.5) within group (order by valor)::NUMERIC, 2) segundo_quartil_mediana,
+		round(percentile_cont(0.75) within group (order by valor)::numeric, 2) terceiro_quartil
+	FROM cap13.lancamentosdsacontabeis
+	group by 1, 2
+	order by 1, 2;
+	
+-- Filter
+	select
+		a.centro_custo,
+		a.moeda,
+		round(sum(a.valor), 2) valor_total_lancamentos,
+		dense_rank() over(order by round(sum(a.valor), 2) desc) as rank_valor_total_lancamentos,
+		round(avg(a.valor), 2) media_lancamentos,
+		rank() over(order by round(avg(a.valor), 2) desc) as rank_media_lancamentos,
+		count(a.*) quantidade_lancamentos,
+		round(coalesce(avg(a.taxa_conversao) filter (where a.moeda != 'BRL'), 0), 2) media_taxa_conversao,
+		rank() over(order by round(coalesce(avg(a.taxa_conversao) filter (where a.moeda != 'BRL'), 0), 2) desc) as rank_media_taxa_conversao
+	FROM cap13.lancamentosdsacontabeis a
+	where centro_custo in ('RH', 'Compras')
+	group by 1, 2;
+
+-- Como fazer um box plot via query:
+	select 
+		centro_custo,
+		moeda,
+		min(valor) as minimo_valor, 
+		percentile_cont(0.25) within group (order by valor) as q1, --
+		round(avg(valor), 2) as media,
+		percentile_cont(0.50) within group (order by valor) as q2,
+		percentile_cont(0.75) within group (order by valor) as q3,
+		max(valor) as maximo_valor 
+	from cap13.lancamentosdsacontabeis
+	group by 1, 2;
+	
+-- Como fazer um box plot via query com cálculo de definição do que é outliers:
+-- Para esse caso, estamos colocando o valor de 1.5 que é o valor padrão na estatística
+-- Mas nem sempre vamos utilizar esse padrão, cada caso é um caso
+-- Lembrando que esse método é uma regra que é um cálculo que vc faz
+	select 
+		centro_custo,
+		moeda,
+		min(valor) as minimo_valor,
+		percentile_cont(0.25) within group (order by valor) - 1.5 * (percentile_cont(0.75) within group (order by valor) - percentile_cont(0.25) within group (order by valor)) as limite_inferior,
+		percentile_cont(0.25) within group (order by valor) as q1,
+		round(avg(valor), 2) as media,
+		percentile_cont(0.50) within group (order by valor) as q2,
+		percentile_cont(0.75) within group (order by valor) as q3,
+		percentile_cont(0.75) within group (order by valor) + 1.5 * (percentile_cont(0.75) within group (order by valor) - percentile_cont(0.25) within group (order by valor)) as limite_superior,
+		max(valor) as maximo_valor	
+	from cap13.lancamentosdsacontabeis
+	group by 1, 2;
+
+-- Mudamos para 0.3, mas não mudamos o método
+	select 
+		centro_custo,
+		moeda,
+		min(valor) as minimo_valor,
+		percentile_cont(0.25) within group (order by valor) - 0.34 * (percentile_cont(0.75) within group (order by valor) - percentile_cont(0.25) within group (order by valor)) as limite_inferior,
+		percentile_cont(0.25) within group (order by valor) as q1,
+		round(avg(valor), 2) as media,
+		percentile_cont(0.50) within group (order by valor) as q2,
+		percentile_cont(0.75) within group (order by valor) as q3,
+		percentile_cont(0.75) within group (order by valor) + 0.34 * (percentile_cont(0.75) within group (order by valor) - percentile_cont(0.25) within group (order by valor)) as limite_superior,
+		max(valor) as maximo_valor	
+	from cap13.lancamentosdsacontabeis
+	group by 1, 2;
+
+-- Lab 2 - Identificação de Outliers
+-- Vamos analisar a coluna valor
+-- Para melhorar a análise, vamos obrservar os outliers por centro de custo e moeda
+-- Para identificar outliers na tabela podemos usar uma abordagem baseada em Estatística,
+-- como calcular o intervalo interquartil (IQR) e identificar valores que estão significativamente
+-- acima ou abaixo desse intervalo.
+-- O IQR é a diferença entre o primeiro quartil (Q1, 25º percentil) e o terceiro quartil (Q3, o 75º percentil).
+-- Os valores abaixo de Q1 - 0.34 * IQR ou acima de Q3 + 0.34 * IQR serão considerados outliers.
+-- Crie a query que identifique os outliers (se existirem), por centro de custo e moeda.
+	with estatisticas as (
+		select
+			centro_custo,
+			moeda,
+			percentile_cont(0.25) within group (order by valor) as q1,
+			percentile_cont(0.75) within group (order by valor) as q3
+		from cap13.lancamentosdsacontabeis
+		group by 1,2
+	),
+	limites_outliers as (
+		select
+			centro_custo,
+			moeda,
+			q1,
+			q3,
+			q1 - 0.34 * (q3 - q1) as limite_inferior,
+			q3 + 0.34 * (q3 - q1) as limite_superior
+		from estatisticas
+	)
+	select
+		l.id,
+		l.data_lancamento,
+		l.centro_custo,
+		l.moeda,
+		l.valor
+	from cap13.lancamentosdsacontabeis l
+	inner join limites_outliers lo
+		using(centro_custo, moeda)
+	where l.valor < lo.limite_inferior or l.valor > lo.limite_superior
+	order by
+		5, 3, 4;
+
+--> Analise de problemas:
+	- Valores nulos
+	- Caracteres especiais
+	- Duplicatas
+	- Outliers
+
+-- total de valores ausentes em todas as colunas
+	SELECT
+	count(1) - count(id) as id_missing,
+	count(1) - count(nome_campanha) as nome_campanha_missing,
+	count(1) - count(data_inicio) as data_inicio_missing,
+	count(1) - count(data_fim) as data_fim_missing,
+	count(1) - count(orcamento) as orcamento_missing,
+	count(1) - count(publico_alvo) as publico_alvo_missing,
+	count(1) - count(canais_divulgacao) as canais_divulgacao_missing,
+	count(1) - count(tipo_campanha) as tipo_campanha_missing,
+	count(1) - count(taxa_conversao) as taxa_conversao_missing,
+	count(1) - count(impressoes) as impressoes_missing
+	FROM cap15.dsa_campanha_marketing;
+
+-- identifique duplicatas
+	select
+		nome_campanha,
+		data_inicio,
+		data_fim,
+		orcamento,
+		publico_alvo,
+		canais_divulgacao,
+		tipo_campanha,
+		taxa_conversao,
+		impressoes,
+		count(1) qtde
+	from cap15.dsa_campanha_marketing
+	group by 1,2,3,4,5,6,7,8,9
+	having count(1)>1;
+
+-- identifique duplicatas e mostre os registros identificados completos na mesma query
+	with filtering as (
+		select
+			nome_campanha,
+			data_inicio,
+			publico_alvo,
+			canais_divulgacao
+		from cap15.dsa_campanha_marketing
+		group by 1,2,3,4
+		having count(1)>1
+	)
+	select *
+	from cap15.dsa_campanha_marketing
+	where (nome_campanha,data_inicio,publico_alvo,canais_divulgacao) in (select * from filtering)
+	
+-- Crie uma query que identifique outliers nas 3 colunas numéricas
+-- Considere como outliers valores que estejam acima ou abaixo das seguintes regras:
+-- media + 1.5 * desvio_padrao
+-- media - 1.5 * desvio_padrao
+	with stats as (
+		select
+			round(avg(orcamento), 2) as avg_orcamento,
+			round(avg(taxa_conversao), 2) as avg_taxa_conversao,
+			round(avg(impressoes), 2) as avg_impressoes,
+			round(stddev(orcamento), 2) as stddev_orcamento,
+			round(stddev(taxa_conversao), 2) as stddev_taxa_conversao,
+			round(stddev(impressoes), 2) as stddev_impressoes
+		from cap15.dsa_campanha_marketing
+	)
+	select -- count(1)
+		id,
+		nome_campanha,
+		data_inicio,
+		data_fim,
+		orcamento,
+		publico_alvo,
+		canais_divulgacao,
+		tipo_campanha,
+		taxa_conversao,
+		impressoes
+	from
+		cap15.dsa_campanha_marketing,
+		stats
+	where
+		orcamento < (avg_orcamento - 1.5 * stddev_orcamento) or
+		orcamento > (avg_orcamento + 1.5 * stddev_orcamento) or
+		taxa_conversao < (avg_taxa_conversao - 1.5 * stddev_taxa_conversao) or
+		taxa_conversao > (avg_taxa_conversao + 1.5 * stddev_taxa_conversao) or
+		impressoes < (avg_impressoes - 1.5 * stddev_impressoes) or
+		impressoes > (avg_impressoes + 1.5 * stddev_impressoes);
+		
+-- Tratamento de inconsistencias:
+	- Variaveis categoricas
+		Colocar valor fixo como: Outros, Não identificado, N/A, Não se aplica, entre outros
+		Colocar a moda (o valor que mais aparece na tabela)
+		Deletar registros, conforme alinhado com área de negócio
+		Preencher valores com a média de valores, baseado em uma regra de negócio ou segmentado por outras colunas
+		
+-- Encontrando a moda da coluna desejada
+	select canais_divulgacao
+	from cap15.dsa_campanha_marketing
+	where canais_divulgacao is not null
+	group by canais_divulgacao
+	order by count(*) desc
+	limit 1;
+
+-- Update com subquery cte - Preencher valores com a média de valores, baseado em uma regra de negócio ou segmentado por outras colunas
+with to_update as (
+	SELECT 
+		avg(orcamento) media_orcamento, 
+		canais_divulgacao
+	FROM cap16.dsa_campanha_marketing
+	where orcamento is not null
+	GROUP BY 2
+)
+update cap16.dsa_campanha_marketing as cm
+set orcamento = to_update.media_orcamento
+from to_update
+where cm.canais_divulgacao = to_update.canais_divulgacao and cm.orcamento is null;
+
+-- Update com case when
+update cap16.dsa_campanha_marketing
+set publico_alvo_encoded = case publico_alvo
+		when 'Publico Alvo 1' then 1
+		when 'Publico Alvo 2' then 2
+		when 'Publico Alvo 3' then 3
+		when 'Publico Alvo 4' then 4
+		when 'Publico Alvo 5' then 5
+		when 'Outros' then 0
+		else NULL
+	end;
+	
+-- drop multiple columns in postgresql
+alter table cap16.dsa_campanha_marketing
+drop column publico_alvo,
+drop column tipo_campanha,
+drop column canais_divulgacao;
+
+-- Pivot table
+select
+	'Total' as Total,
+	sum(case when extract( year from data_inicio) = 2022 then orcamento else 0 end) as orcamento_2022,
+	sum(case when extract( year from data_inicio) = 2022 then taxa_conversao else 0 end) as taxa_conversao_2022,
+	sum(case when extract( year from data_inicio) = 2022 then impressoes else 0 end) as impressoes_2022,
+	sum(case when extract( year from data_inicio) = 2023 then orcamento else 0 end) as orcamento_2023,
+	sum(case when extract( year from data_inicio) = 2023 then taxa_conversao else 0 end) as taxa_conversao_2023,
+	sum(case when extract( year from data_inicio) = 2023 then impressoes else 0 end) as impressoes_2023,
+	sum(case when extract( year from data_inicio) = 2024 then orcamento else 0 end) as orcamento_2024,
+	sum(case when extract( year from data_inicio) = 2024 then taxa_conversao else 0 end) as taxa_conversao_2024,
+	sum(case when extract( year from data_inicio) = 2024 then impressoes else 0 end) as impressoes_2024
+from cap16.dsa_campanha_marketing;
+
+-- Normalização: Deixar os dados na mesma escala
+with min_max as (
+	select
+		min(orcamento) min_orcamento,
+		max(orcamento) max_orcamento,
+		min(taxa_conversao) min_taxa_conversao,
+		max(taxa_conversao) max_taxa_conversao
+	from cap16.dsa_campanha_marketing
+)
+select 
+	id,
+	nome_campanha,
+	data_inicio,
+	data_fim,
+	round((orcamento - min_orcamento) / (max_orcamento - min_orcamento), 5) as orcamento_normalizado,
+	round((taxa_conversao - min_taxa_conversao) / (max_taxa_conversao - min_taxa_conversao), 5) as taxa_conversao_normalizado
+from cap16.dsa_campanha_marketing, min_max;
+
+-- Utilizar functions via query
+	-- Criação da function
+		CREATE OR REPLACE FUNCTION cap19.calcular_total_vendas_cliente(cliente_id_param INT)
+		RETURNS DECIMAL(10, 2) AS $$
+		DECLARE
+			total_vendas DECIMAL(10, 2);
+		BEGIN
+			SELECT SUM(valor_venda) INTO total_vendas
+			FROM cap19.vendas
+			WHERE cliente_id = cliente_id_param;
+
+			IF total_vendas IS NULL THEN
+				RETURN 0;
+			ELSE
